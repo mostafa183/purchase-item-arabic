@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    <title>إدارة أوامر الشراء</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #F6FEFC;
+            direction: rtl;
+            color: #003a2d;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .form-group-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .input-field input[type="text"],
+        .input-field input[type="email"],
+        .input-field input[type="date"],
+        .input-field input[type="number"],
+        .input-field textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .input-field input:focus,
+        .input-field textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 60px;
+        }
+
+        .full-width {
+            flex-basis: 100%;
+        }
+
+        /* جدول العناصر */
+        #itemTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        #itemTable td, #itemTable th {
+            padding: 10px;
+            text-align: right;
+            border: 1px solid #ddd;
+        }
+
+        #itemTable th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #itemTable td input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* أزرار */
+        .main-calculator-container .btn-tools-primary,
+        .main-calculator-container .btn-tools-clear,
+        .main-calculator-container .btn-add-item {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .btn-tools-primary {
+            background-color: #008060;
+            color: white;
+            border: none;
+        }
+
+        .btn-tools-primary:hover {
+            background-color: #005A40;
+        }
+
+        .btn-tools-clear {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+
+        .btn-tools-clear:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-add-item {
+            background-color: #008060;
+            color: white;
+            border: none;
+            text-align: center;
+            width: 20%;
+        }
+
+        .btn-add-item:hover {
+            background-color: #0056b3;
+        }
+
+        /* استجابة */
+        @media (max-width: 600px) {
+            .form-group-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="purchaseOrderForm">
+            <div class="form-group-row">
+                <div class="input-field">
+                    <label for="companyName">اسم الشركة</label>
+                    <input id="companyName" type="text" placeholder="اسم الشركة" required>
+                </div>
+                <div class="input-field">
+                    <label for="companyEmail">البريد الإلكتروني</label>
+                    <input id="companyEmail" type="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-field">
+                    <label for="address">العنوان</label>
+                    <input id="address" type="text" placeholder="العنوان" required>
+                </div>
+            </div>
+  
+            <div class="container vendor-info">
+                <h2>أدخل معلومات المورد</h2>
+                <div class="form-group-row">
+                    <div class="input-field">
+                        <label for="vendorName">اسم المورد</label>
+                        <input id="vendorName" type="text" placeholder="اسم المورد" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="vendorEmail">البريد الإلكتروني</label>
+                        <input id="vendorEmail" type="email" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="vendorPhone">رقم الهاتف</label>
+                        <input id="vendorPhone" type="text" placeholder="رقم الهاتف" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="vendorAddress">العنوان</label>
+                        <input id="vendorAddress" type="text" placeholder="العنوان" required>
+                    </div>
+                </div>
+            </div>
+  
+            <div class="container purchase-order-info">
+                <h2>أدخل معلومات أمر الشراء</h2>
+                <div class="form-group-row">
+                    <div class="input-field">
+                        <label for="purchaseOrderNumber">رقم أمر الشراء</label>
+                        <input id="purchaseOrderNumber" type="text" placeholder="رقم أمر الشراء" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="purchaseOrderDate">تاريخ أمر الشراء</label>
+                        <input id="purchaseOrderDate" type="date" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="deliveryDate">تاريخ التسليم</label>
+                        <input id="deliveryDate" type="date" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="shippingMethod">طريقة الشحن</label>
+                        <input id="shippingMethod" type="text" placeholder="طريقة الشحن" required>
+                    </div>
+                    <div class="input-field full-width">
+                        <label for="shippingTerms">شروط الشحن</label>
+                        <textarea id="shippingTerms" placeholder="شروط الشحن" required></textarea>
+                    </div>
+                </div>
+            </div>
+  
+            <div class="container">
+                <h2>أدخل العناصر التي ترغب في طلبها</h2>
+                <table id="itemTable" class="form-table">
+                    <tr>
+                        <td><input type="text" id="item1" placeholder="العنصر" required></td>
+                        <td><input type="text" id="desc1" placeholder="الوصف" required></td>
+                        <td><input type="number" id="quantity1" value="1" min="1" onchange="calculateTotal()" required></td>
+                        <td><input type="number" id="price1" value="0" min="0" onchange="calculateTotal()" required></td>
+                        <td><span id="amount1">0.00</span> ج.م</td>
+                    </tr>
+                </table>
+                <button class="btn-add-item" type="button" onclick="addItem()">إضافة عنصر</button>
+                <div class="form-group-row">
+                    <div class="input-field">
+                        <label for="taxRate">معدل الضريبة:</label>
+                        <input type="number" id="taxRate" value="13" min="0" max="100" onchange="calculateTotal()"> %
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="input-field">
+                        <label>الإجمالي الفرعي:</label>
+                        <span id="subtotal">0.00</span> ج.م
+                    </div>
+                    <div class="input-field">
+                        <label>الضريبة:</label>
+                        <span id="tax">0.00</span> ج.م
+                    </div>
+                    <div class="input-field">
+                        <label>الإجمالي:</label>
+                        <span id="total">0.00</span> ج.م
+                    </div>
+                </div>
+                <div class="main-calculator-container">
+                  <button class="btn-tools-primary" type="button" onclick="downloadInvoice()">تحميل الفاتورة</button>
+                  <button class="btn-tools-clear" type="button" onclick="clearForm()">مسح النموذج</button>
+              </div>
+            </div>
+        </form>
+    </div>
+  
+    <script>
+        // وظيفة لحساب الإجمالي الكلي
+        function calculateTotal() {
+            let subtotal = 0;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+            document.querySelectorAll('#itemTable tr').forEach((row, index) => {
+                const quantity = parseFloat(row.querySelector(`#quantity${index + 1}`).value) || 0;
+                const price = parseFloat(row.querySelector(`#price${index + 1}`).value) || 0;
+                const amount = quantity * price;
+                row.querySelector(`#amount${index + 1}`).textContent = amount.toFixed(2) + " ج.م";
+                subtotal += amount;
+            });
+            const tax = subtotal * taxRate;
+            const total = subtotal + tax;
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + " ج.م";
+            document.getElementById('tax').textContent = tax.toFixed(2) + " ج.م";
+            document.getElementById('total').textContent = total.toFixed(2) + " ج.م";
+        }
+  
+        // وظيفة لإضافة عنصر جديد
+        function addItem() {
+            const table = document.getElementById('itemTable');
+            const rowCount = table.rows.length;
+            const row = table.insertRow();
+            row.innerHTML = `
+                <td><input type="text" id="item${rowCount + 1}" placeholder="العنصر" required></td>
+                <td><input type="text" id="desc${rowCount + 1}" placeholder="الوصف" required></td>
+                <td><input type="number" id="quantity${rowCount + 1}" value="1" min="1" onchange="calculateTotal()" required></td>
+                <td><input type="number" id="price${rowCount + 1}" value="0" min="0" onchange="calculateTotal()" required></td>
+                <td><span id="amount${rowCount + 1}">0.00</span> ج.م</td>
+            `;
+        }
+  
+        // وظيفة لتحميل الفاتورة بصيغة PDF
+        function downloadInvoice() {
+            const vendorName = document.getElementById('vendorName').value;
+            const vendorEmail = document.getElementById('vendorEmail').value;
+            const vendorPhone = document.getElementById('vendorPhone').value;
+            const vendorAddress = document.getElementById('vendorAddress').value;
+            const purchaseOrderNumber = document.getElementById('purchaseOrderNumber').value;
+            const purchaseOrderDate = document.getElementById('purchaseOrderDate').value;
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const shippingMethod = document.getElementById('shippingMethod').value;
+            const shippingTerms = document.getElementById('shippingTerms').value;
+  
+            const invoiceContent = `
+                <div style="font-family: Arial, sans-serif; color: #333; direction: rtl; text-align: right;">
+                    <h2>فاتورة</h2>
+                    <h3>معلومات المورد</h3>
+                    <p><strong>الاسم:</strong> ${vendorName}</p>
+                    <p><strong>البريد الإلكتروني:</strong> ${vendorEmail}</p>
+                    <p><strong>رقم الهاتف:</strong> ${vendorPhone}</p>
+                    <p><strong>العنوان:</strong> ${vendorAddress}</p>
+                    <h3>معلومات أمر الشراء</h3>
+                    <p><strong>رقم أمر الشراء:</strong> ${purchaseOrderNumber}</p>
+                    <p><strong>تاريخ أمر الشراء:</strong> ${purchaseOrderDate}</p>
+                    <p><strong>تاريخ التسليم:</strong> ${deliveryDate}</p>
+                    <p><strong>طريقة الشحن:</strong> ${shippingMethod}</p>
+                    <p><strong>شروط الشحن:</strong> ${shippingTerms}</p>
+                    <h3>العناصر المطلوبة</h3>
+                    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #ccc;">العنصر</th>
+                                <th style="border: 1px solid #ccc;">الوصف</th>
+                                <th style="border: 1px solid #ccc;">الكمية</th>
+                                <th style="border: 1px solid #ccc;">السعر</th>
+                                <th style="border: 1px solid #ccc;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from(document.querySelectorAll('#itemTable tr')).map((row, index) => {
+                                const item = document.getElementById(`item${index + 1}`).value;
+                                const desc = document.getElementById(`desc${index + 1}`).value;
+                                const quantity = document.getElementById(`quantity${index + 1}`).value;
+                                const price = document.getElementById(`price${index + 1}`).value;
+                                const amount = document.getElementById(`amount${index + 1}`).textContent;
+                                return `
+                                    <tr>
+                                        <td style="border: 1px solid #ccc;">${item}</td>
+                                        <td style="border: 1px solid #ccc;">${desc}</td>
+                                        <td style="border: 1px solid #ccc;">${quantity}</td>
+                                        <td style="border: 1px solid #ccc;">${price}</td>
+                                        <td style="border: 1px solid #ccc;">${amount}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    <h3>الإجماليات</h3>
+                    <p><strong>الإجمالي الفرعي:</strong> ${document.getElementById('subtotal').textContent}</p>
+                    <p><strong>الضريبة:</strong> ${document.getElementById('tax').textContent}</p>
+                    <p><strong>الإجمالي الكلي:</strong> ${document.getElementById('total').textContent}</p>
+                </div>
+            `;
+  
+            const newWindow = window.open('', '', 'width=800,height=600');
+            newWindow.document.write(invoiceContent);
+            newWindow.document.close();
+            newWindow.print();
+        }
+  
+        // وظيفة لمسح النموذج
+        function clearForm() {
+            document.getElementById('purchaseOrderForm').reset();
+            document.getElementById('itemTable').innerHTML = `
+                <tr>
+                    <td><input type="text" id="item1" placeholder="العنصر" required></td>
+                    <td><input type="text" id="desc1" placeholder="الوصف" required></td>
+                    <td><input type="number" id="quantity1" value="1" min="1" onchange="calculateTotal()" required></td>
+                    <td><input type="number" id="price1" value="0" min="0" onchange="calculateTotal()" required></td>
+                    <td><span id="amount1">0.00</span> ج.م</td>
+                </tr>
+            `;
+            calculateTotal();
+        }
+    </script>
+  </body>
+  
+</html>
